@@ -1,18 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Register</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Player Registration - TaskForce FF</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h2>Player Registration</h2>
-<form>
-Player Name: <input type='text'><br>
-UID: <input type='text'><br>
-Send Money to: <strong>01758835195</strong><br>
-Payment Method: <input type='text'><br>
-TrxID: <input type='text'><br>
-Amount: <input type='text'><br>
-<input type='submit' value='Register'>
-</form>
+    <nav class="navbar navbar-dark bg-dark p-3">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Taskforce FF Tournament</a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h2>Player Registration</h2>
+        <form id="registerForm">
+            <div class="mb-3">
+                <label for="playerName" class="form-label">Player Name</label>
+                <input type="text" class="form-control" id="playerName" required />
+            </div>
+            <div class="mb-3">
+                <label for="playerUID" class="form-label">Player UID</label>
+                <input type="text" class="form-control" id="playerUID" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Send Money to <strong>01758835195</strong></label>
+            </div>
+            <div class="mb-3">
+                <label for="paymentMethod" class="form-label">Payment Method (bKash/Nagad/Rocket)</label>
+                <input type="text" class="form-control" id="paymentMethod" required />
+            </div>
+            <div class="mb-3">
+                <label for="trxID" class="form-label">Transaction ID (TrxID)</label>
+                <input type="text" class="form-control" id="trxID" required />
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="amount" required min="0" />
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+
+        <div id="successMessage" class="alert alert-success mt-4 d-none">
+            Registration successful! Thank you for registering.
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const successMessage = document.getElementById('successMessage');
+
+        registerForm.addEventListener('submit', e => {
+            e.preventDefault();
+
+            const playerName = document.getElementById('playerName').value.trim();
+            const playerUID = document.getElementById('playerUID').value.trim();
+            const paymentMethod = document.getElementById('paymentMethod').value.trim();
+            const trxID = document.getElementById('trxID').value.trim();
+            const amount = document.getElementById('amount').value.trim();
+
+            if (!playerName || !playerUID || !paymentMethod || !trxID || !amount) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const db = firebase.database();
+            const playersRef = db.ref('players');
+
+            const newPlayerRef = playersRef.push();
+            newPlayerRef.set({
+                playerName,
+                playerUID,
+                paymentMethod,
+                trxID,
+                amount,
+                timestamp: Date.now()
+            }).then(() => {
+                registerForm.reset();
+                successMessage.classList.remove('d-none');
+                // Optionally redirect after 3 seconds
+                // setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+            }).catch(error => {
+                alert('Error: ' + error.message);
+            });
+        });
+    </script>
 </body>
 </html>
