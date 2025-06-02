@@ -1,5 +1,5 @@
 // Timer Countdown Function
-const countDownDate = new Date("June 5, 2025 21:00:00").getTime();
+const countDownDate = new Date("June 6, 2025 19:00:00").getTime();
 
 const countdownInterval = setInterval(function () {
   const now = new Date().getTime();
