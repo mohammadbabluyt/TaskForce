@@ -28,6 +28,29 @@ header h1 {
   letter-spacing: 2px;
 }
 
+/* TimerSection */
+#countdownSection {
+  background: #1a1a1a;
+  padding: 20px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+  margin-bottom: 30px;
+}
+
+#countdownSection h2 {
+  color: #ffcc00;
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+#countdownTimer {
+  font-size: 28px;
+  color: #00ffcc;
+  font-weight: bold;
+}
+
+
 /* Registration Form */
 #registrationForm {
   background: #1a1a1a;
