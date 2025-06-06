@@ -64,12 +64,23 @@
       text-shadow: 1px 1px 3px #000;
     }
 
+    /* Label positioning (for each 45° sector) */
+    .wheel span:nth-child(1) { transform: rotate(22.5deg) translateX(120px); }
+    .wheel span:nth-child(2) { transform: rotate(67.5deg) translateX(120px); }
+    .wheel span:nth-child(3) { transform: rotate(112.5deg) translateX(120px); }
+    .wheel span:nth-child(4) { transform: rotate(157.5deg) translateX(120px); }
+    .wheel span:nth-child(5) { transform: rotate(202.5deg) translateX(120px); }
+    .wheel span:nth-child(6) { transform: rotate(247.5deg) translateX(120px); }
+    .wheel span:nth-child(7) { transform: rotate(292.5deg) translateX(120px); }
+    .wheel span:nth-child(8) { transform: rotate(337.5deg) translateX(120px); }
+
     .pointer {
       position: absolute;
-      top: -30px;
+      bottom: -30px;
       left: 50%;
-      transform: translateX(-50%);
-      width: 0; height: 0;
+      transform: translateX(-50%) rotate(180deg);
+      width: 0;
+      height: 0;
       border-left: 20px solid transparent;
       border-right: 20px solid transparent;
       border-bottom: 30px solid #00e0ff;
@@ -97,17 +108,17 @@
 <body>
   <h2>Spin to Win Points!</h2>
   <div class="wheel-container">
-    <div class="pointer"></div>
     <div class="wheel" id="wheel">
-      <span style="transform: rotate(22.5deg) translateX(120px);">5</span>
-      <span style="transform: rotate(67.5deg) translateX(120px);">10</span>
-      <span style="transform: rotate(112.5deg) translateX(120px);">15</span>
-      <span style="transform: rotate(157.5deg) translateX(120px);">20</span>
-      <span style="transform: rotate(202.5deg) translateX(120px);">50</span>
-      <span style="transform: rotate(247.5deg) translateX(120px);">100</span>
-      <span style="transform: rotate(292.5deg) translateX(120px);">Miss</span>
-      <span style="transform: rotate(337.5deg) translateX(120px);">25</span>
+      <span>5</span>
+      <span>10</span>
+      <span>15</span>
+      <span>20</span>
+      <span>50</span>
+      <span>100</span>
+      <span>Miss</span>
+      <span>25</span>
     </div>
+    <div class="pointer"></div>
   </div>
   <button id="spinBtn">SPIN</button>
   <div id="result"></div>
@@ -116,8 +127,10 @@
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     const result = document.getElementById('result');
+
     const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
     const anglePerSegment = 360 / segments.length;
+    let currentRotation = 0;
     let isSpinning = false;
 
     spinBtn.addEventListener('click', () => {
@@ -126,8 +139,14 @@
       result.innerText = "Spinning...";
 
       const randomIndex = Math.floor(Math.random() * segments.length);
-      const stopAngle = (360 * 4) + (anglePerSegment * randomIndex) + (anglePerSegment / 2);
-      wheel.style.transform = `rotate(${stopAngle}deg)`;
+
+      // Reverse the index because the wheel rotates clockwise
+      const landingAngle = 360 - (randomIndex * anglePerSegment + anglePerSegment / 2);
+
+      const rotateTo = (360 * 5) + landingAngle;
+      currentRotation = rotateTo;
+
+      wheel.style.transform = `rotate(${rotateTo}deg)`;
 
       setTimeout(() => {
         const value = segments[randomIndex];
