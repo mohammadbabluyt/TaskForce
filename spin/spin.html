@@ -2,159 +2,120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>3D Spin & Win</title>
+  <title>Spin & Win (Pointer Spins)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle, #1b2735 0%, #090a0f 100%);
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+    /* ---------- Base layout ---------- */
+    body{
+      margin:0;padding:0;
+      background:radial-gradient(circle,#1b2735 0%,#090a0f 100%);
+      font-family:'Segoe UI',sans-serif;
+      color:#fff;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;height:100vh;
     }
+    h2{margin-bottom:20px;font-size:28px;color:#00e0ff;text-shadow:0 0 10px #00e0ff;}
 
-    h2 {
-      margin-bottom: 20px;
-      font-size: 28px;
-      color: #00e0ff;
-      text-shadow: 0 0 10px #00e0ff;
-    }
-
-    .wheel-container {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      perspective: 1000px;
-    }
-
-    .wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: conic-gradient(
-        #00bcd4 0deg 45deg,
-        #4caf50 45deg 90deg,
-        #ff9800 90deg 135deg,
-        #f44336 135deg 180deg,
-        #9c27b0 180deg 225deg,
-        #2196f3 225deg 270deg,
-        #607d8b 270deg 315deg,
-        #ffc107 315deg 360deg
+    /* ---------- Wheel ---------- */
+    .wheel-container{position:relative;width:300px;height:300px;}
+    .wheel{
+      width:100%;height:100%;border-radius:50%;
+      background:conic-gradient(
+        #00bcd4 0deg 45deg,#4caf50 45deg 90deg,
+        #ff9800 90deg 135deg,#f44336 135deg 180deg,
+        #9c27b0 180deg 225deg,#2196f3 225deg 270deg,
+        #607d8b 270deg 315deg,#ffc107 315deg 360deg
       );
-      border: 8px solid #fff;
-      transform-style: preserve-3d;
-      transition: transform 4s ease-out;
-      position: relative;
+      border:8px solid #fff;
+      position:relative;
     }
 
-    .wheel span {
-      position: absolute;
-      width: 80px;
-      left: 50%;
-      top: 50%;
-      transform-origin: left center;
-      font-size: 14px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 1px 1px 3px #000;
+    /* ---------- Labels ---------- */
+    .wheel span{
+      position:absolute;width:80px;left:50%;top:50%;
+      transform-origin:left center;
+      font-size:14px;font-weight:bold;color:#fff;text-shadow:1px 1px 3px #000;
+    }
+    .wheel span:nth-child(1){transform:rotate(22.5deg) translateX(120px);}
+    .wheel span:nth-child(2){transform:rotate(67.5deg) translateX(120px);}
+    .wheel span:nth-child(3){transform:rotate(112.5deg) translateX(120px);}
+    .wheel span:nth-child(4){transform:rotate(157.5deg) translateX(120px);}
+    .wheel span:nth-child(5){transform:rotate(202.5deg) translateX(120px);}
+    .wheel span:nth-child(6){transform:rotate(247.5deg) translateX(120px);}
+    .wheel span:nth-child(7){transform:rotate(292.5deg) translateX(120px);}
+    .wheel span:nth-child(8){transform:rotate(337.5deg) translateX(120px);}
+
+    /* ---------- Pointer ---------- */
+    .pointer-container{
+      position:absolute;top:0;left:0;width:100%;height:100%;
+      transform-origin:50% 50%; /* ঘোরার কেন্দ্র wheel-এর মাঝখানে */
+      transition:transform 4s ease-out;
+    }
+    .pointer{
+      position:absolute;left:50%;top:-30px;transform:translateX(-50%);
+      width:0;height:0;
+      border-left:20px solid transparent;border-right:20px solid transparent;
+      border-bottom:30px solid #00e0ff; /* ত্রিভুজ নিচের দিকে নির্দেশ করে */
     }
 
-    /* Label positioning (for each 45° sector) */
-    .wheel span:nth-child(1) { transform: rotate(22.5deg) translateX(120px); }
-    .wheel span:nth-child(2) { transform: rotate(67.5deg) translateX(120px); }
-    .wheel span:nth-child(3) { transform: rotate(112.5deg) translateX(120px); }
-    .wheel span:nth-child(4) { transform: rotate(157.5deg) translateX(120px); }
-    .wheel span:nth-child(5) { transform: rotate(202.5deg) translateX(120px); }
-    .wheel span:nth-child(6) { transform: rotate(247.5deg) translateX(120px); }
-    .wheel span:nth-child(7) { transform: rotate(292.5deg) translateX(120px); }
-    .wheel span:nth-child(8) { transform: rotate(337.5deg) translateX(120px); }
-
-    .pointer {
-      position: absolute;
-      bottom: -30px;
-      left: 50%;
-      transform: translateX(-50%) rotate(180deg);
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 30px solid #00e0ff;
+    /* ---------- Controls ---------- */
+    #spinBtn{
+      margin-top:30px;padding:12px 30px;font-size:18px;
+      background:#00e0ff;color:#000;border:none;border-radius:8px;cursor:pointer;
+      box-shadow:0 4px 10px rgba(0,224,255,.5);
     }
-
-    #spinBtn {
-      margin-top: 30px;
-      padding: 12px 30px;
-      font-size: 18px;
-      background: #00e0ff;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 224, 255, 0.5);
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #00ff88;
-    }
+    #result{margin-top:20px;font-size:20px;color:#00ff88;}
   </style>
 </head>
 <body>
-  <h2>Spin to Win Points!</h2>
+  <h2>Spin&nbsp;to&nbsp;Win&nbsp;Points!</h2>
+
   <div class="wheel-container">
     <div class="wheel" id="wheel">
-      <span>5</span>
-      <span>10</span>
-      <span>15</span>
-      <span>20</span>
-      <span>50</span>
-      <span>100</span>
-      <span>Miss</span>
-      <span>25</span>
+      <span>5</span><span>10</span><span>15</span><span>20</span>
+      <span>50</span><span>100</span><span>Miss</span><span>25</span>
     </div>
-    <div class="pointer"></div>
+
+    <!-- এই container-টাই ঘুরবে -->
+    <div class="pointer-container" id="pointerWrap">
+      <div class="pointer"></div>
+    </div>
   </div>
+
   <button id="spinBtn">SPIN</button>
   <div id="result"></div>
 
   <script>
-    const wheel = document.getElementById('wheel');
-    const spinBtn = document.getElementById('spinBtn');
-    const result = document.getElementById('result');
+    /* ---------- Variables ---------- */
+    const pointerWrap = document.getElementById('pointerWrap');
+    const spinBtn     = document.getElementById('spinBtn');
+    const resultBox   = document.getElementById('result');
 
-    const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
-    const anglePerSegment = 360 / segments.length;
-    let currentRotation = 0;
-    let isSpinning = false;
+    const segments          = ['5','10','15','20','50','100','Miss','25'];
+    const anglePerSegment   = 360 / segments.length;
+    let   isSpinning        = false;
 
+    /* ---------- Spin Logic ---------- */
     spinBtn.addEventListener('click', () => {
       if (isSpinning) return;
       isSpinning = true;
-      result.innerText = "Spinning...";
+      resultBox.textContent = 'Spinning...';
 
       const randomIndex = Math.floor(Math.random() * segments.length);
 
-      // Reverse the index because the wheel rotates clockwise
-      const landingAngle = 360 - (randomIndex * anglePerSegment + anglePerSegment / 2);
+      /* pointer-কে যেই খানের মাঝামাঝি থামাতে হবে সেই কোণ + অতিরিক্ত ঘূর্ণন */
+      const targetAngle = (randomIndex * anglePerSegment) + (anglePerSegment / 2);
+      const rotateTo    = (360 * 10) + targetAngle;     // 10 বার পাক দিয়ে থামবে
 
-      const rotateTo = (360 * 5) + landingAngle;
-      currentRotation = rotateTo;
+      pointerWrap.style.transform = `rotate(${rotateTo}deg)`;
 
-      wheel.style.transform = `rotate(${rotateTo}deg)`;
-
+      /* Result দেখানো */
       setTimeout(() => {
         const value = segments[randomIndex];
-        result.innerText = (value === 'Miss')
-          ? '🙁 You missed! Try again.'
-          : `🎉 You won ${value} Points!`;
+        resultBox.textContent = (value === 'Miss')
+          ? '🙁   You missed!  Try again.'
+          : `🎉   You won ${value} Points!`;
         isSpinning = false;
-      }, 4000);
+      }, 4000);  // ট্রানজিশন সময় মতোই
     });
   </script>
 </body>
