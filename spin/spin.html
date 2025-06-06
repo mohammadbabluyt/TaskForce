@@ -1,219 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Taskforce Spin & Win</title>
-<style>
-  body {
-    margin: 0; padding: 0;
-    background: radial-gradient(circle, #1b2735 0%, #090a0f 100%);
-    font-family: 'Segoe UI', sans-serif;
-    color: #fff;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    height: 100vh;
-  }
-  h2 {
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #00e0ff;
-    text-shadow: 0 0 10px #00e0ff;
-  }
-  .wheel-container {
-    position: relative;
-    width: 300px; height: 300px;
-    perspective: 1000px;
-  }
-  .wheel {
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    background: conic-gradient(
-      #00bcd4 0deg 45deg,
-      #4caf50 45deg 90deg,
-      #ff9800 90deg 135deg,
-      #f44336 135deg 180deg,
-      #9c27b0 180deg 225deg,
-      #2196f3 225deg 270deg,
-      #607d8b 270deg 315deg,
-      #ffc107 315deg 360deg
-    );
-    border: 8px solid #fff;
-    transform-style: preserve-3d;
-    transition: transform 4s ease-out;
-    position: relative;
-  }
-  .wheel span {
-    position: absolute;
-    width: 80px;
-    left: 50%; top: 50%;
-    transform-origin: left center;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 1px 1px 3px #000;
-  }
-  .pointer {
-    position: absolute;
-    top: -30px; left: 50%;
-    transform: translateX(-50%) rotate(180deg);
-    width: 0; height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 30px solid #00e0ff;
-    z-index: 10;
-  }
-  #spinBtn, #loginBtn {
-    margin-top: 20px;
-    padding: 12px 30px;
-    font-size: 18px;
-    background: #00e0ff;
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 224, 255, 0.5);
-  }
-  #result {
-    margin-top: 20px;
-    font-size: 20px;
-    color: #00ff88;
-    min-height: 28px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Taskforce Spin & Earn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background: #121212;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      min-height: 100vh;
+      justify-content: center;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #loginBtn {
+      background-color: #4285F4;
+      color: white;
+      width: 200px;
+    }
+    #spinBtn {
+      background-color: #00e0ff;
+      color: black;
+      width: 200px;
+    }
+    #spinBtn:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 22px;
+      font-weight: bold;
+      min-height: 50px;
+      text-align: center;
+      max-width: 300px;
+    }
+    #userInfo {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #0f0;
+      min-height: 24px;
+    }
+  </style>
 </head>
 <body>
-<h2>Taskforce Spin to Win Points!</h2>
 
-<button id="loginBtn">Sign in with Google</button>
+  <h1>Taskforce Spin & Earn</h1>
 
-<div class="wheel-container" style="display:none;">
-  <div class="pointer"></div>
-  <div class="wheel" id="wheel">
-    <span style="transform: rotate(22.5deg) translateX(120px);">5</span>
-    <span style="transform: rotate(67.5deg) translateX(120px);">10</span>
-    <span style="transform: rotate(112.5deg) translateX(120px);">15</span>
-    <span style="transform: rotate(157.5deg) translateX(120px);">20</span>
-    <span style="transform: rotate(202.5deg) translateX(120px);">50</span>
-    <span style="transform: rotate(247.5deg) translateX(120px);">100</span>
-    <span style="transform: rotate(292.5deg) translateX(120px);">Miss</span>
-    <span style="transform: rotate(337.5deg) translateX(120px);">25</span>
-  </div>
-</div>
+  <div id="userInfo"></div>
 
-<button id="spinBtn" style="display:none;">SPIN</button>
-<div id="result"></div>
+  <button id="loginBtn">Login with Google</button>
+  <button id="spinBtn" disabled>Spin to Earn Points</button>
 
-<!-- Firebase JS SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <div id="result"></div>
 
-<script>
-  // ================================
-  // Replace this config with your own Firebase project config
-  const firebaseConfig = {
-    apiKey: "AIzaSyA4qf9zxmr2c1XcbG4pq0ncnLZLtvT7SeI",
-    authDomain: "taskforce-12345.firebaseapp.com",
-    projectId: "taskforce-12345",
-    storageBucket: "taskforce-12345.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef123456"
-  };
-  // ================================
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  firebase.initializeApp(firebaseConfig);
+  <script>
+    // --- Paste your Firebase config here ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyD786-l7KQNCEQvxjwEHLw5GxNmW33zYBQ",
+      authDomain: "taskforceweb-5c958.firebaseapp.com",
+      projectId: "taskforceweb-5c958",
+      storageBucket: "taskforceweb-5c958.appspot.com",
+      messagingSenderId: "339500836857",
+      appId: "1:339500836857:web:6843e289ca467a65857f28",
+      measurementId: "G-N62C9FFXNC"
+    };
 
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  const loginBtn = document.getElementById('loginBtn');
-  const spinBtn = document.getElementById('spinBtn');
-  const wheel = document.getElementById('wheel');
-  const result = document.getElementById('result');
-  const wheelContainer = document.querySelector('.wheel-container');
+    const loginBtn = document.getElementById('loginBtn');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultDiv = document.getElementById('result');
+    const userInfo = document.getElementById('userInfo');
 
-  const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
-  const anglePerSegment = 360 / segments.length;
-  let isSpinning = false;
-  let currentUser = null;
-
-  // Show or hide elements depending on login status
-  function updateUI() {
-    if(currentUser) {
-      loginBtn.style.display = 'none';
-      spinBtn.style.display = 'inline-block';
-      wheelContainer.style.display = 'block';
-      result.innerText = '';
-    } else {
-      loginBtn.style.display = 'inline-block';
-      spinBtn.style.display = 'none';
-      wheelContainer.style.display = 'none';
-      result.innerText = 'Please sign in to spin and earn points.';
-    }
-  }
-
-  // Sign in with Google
-  loginBtn.addEventListener('click', () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).then((result) => {
-      currentUser = result.user;
-      // Save user info in firestore (if not already)
-      if(currentUser) {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        userRef.set({
-          name: currentUser.displayName,
-          email: currentUser.email,
-          points: 0
-        }, { merge: true });
-      }
-      updateUI();
-    }).catch((error) => {
-      alert('Login Failed: ' + error.message);
-    });
-  });
-
-  // Spin button click
-  spinBtn.addEventListener('click', () => {
-    if(isSpinning) return;
-
-    isSpinning = true;
-    result.innerText = "Spinning...";
-
-    // Calculate random index and stop angle
-    const randomIndex = Math.floor(Math.random() * segments.length);
-    const stopAngle = (360 * 5) + (anglePerSegment * randomIndex) + (anglePerSegment / 2);
-    wheel.style.transition = 'transform 4s ease-out';
-    wheel.style.transform = `rotate(${stopAngle}deg)`;
-
-    setTimeout(async () => {
-      const value = segments[randomIndex];
-      if(value !== 'Miss') {
-        // Update points in Firestore
-        const userRef = db.collection('users').doc(currentUser.uid);
-        await db.runTransaction(async (transaction) => {
-          const doc = await transaction.get(userRef);
-          if(!doc.exists) {
-            transaction.set(userRef, { points: parseInt(value) });
-          } else {
-            let newPoints = (doc.data().points || 0) + parseInt(value);
-            transaction.update(userRef, { points: newPoints });
-          }
+    // Handle Login
+    loginBtn.addEventListener('click', () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          // User signed in
+          updateUI(result.user);
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
         });
-        result.innerText = `🎉 You won ${value} Points!`;
+    });
+
+    // Listen for auth state change
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        updateUI(user);
       } else {
-        result.innerText = '🙁 You missed! Try again.';
+        updateUI(null);
       }
-      isSpinning = false;
-    }, 4000);
-  });
+    });
 
-  // Monitor auth state
-  auth.onAuthStateChanged(user => {
-    currentUser = user;
-    updateUI();
-  });
+    // Update UI based on user status
+    function updateUI(user) {
+      if (user) {
+        userInfo.innerText = `Welcome, ${user.displayName}`;
+        loginBtn.style.display = 'none';
+        spinBtn.disabled = false;
+      } else {
+        userInfo.innerText = '';
+        loginBtn.style.display = 'inline-block';
+        spinBtn.disabled = true;
+        resultDiv.innerText = '';
+      }
+    }
 
-</script>
+    // Save points to Firestore user doc
+    function savePoints(userId, points) {
+      const userRef = db.collection('users').doc(userId);
+      return userRef.set({
+        points: firebase.firestore.FieldValue.increment(points)
+      }, { merge: true });
+    }
+
+    // Spin logic
+    spinBtn.addEventListener('click', () => {
+      resultDiv.innerText = "Spinning...";
+      spinBtn.disabled = true;
+
+      setTimeout(() => {
+        // Random points array (0 = Miss)
+        const pointsArr = [5, 10, 15, 20, 50, 100, 0, 25];
+        const idx = Math.floor(Math.random() * pointsArr.length);
+        const wonPoints = pointsArr[idx];
+
+        if (wonPoints === 0) {
+          resultDiv.innerText = "🙁 You missed! Try again.";
+          spinBtn.disabled = false;
+          return;
+        }
+
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Please login first!");
+          spinBtn.disabled = false;
+          return;
+        }
+
+        savePoints(user.uid, wonPoints)
+          .then(() => {
+            resultDiv.innerText = `🎉 Congratulations! You won ${wonPoints} points.`;
+            spinBtn.disabled = false;
+          })
+          .catch(err => {
+            alert("Failed to save points: " + err.message);
+            spinBtn.disabled = false;
+          });
+      }, 3000); // simulate spin delay 3 sec
+    });
+  </script>
+
 </body>
 </html>
