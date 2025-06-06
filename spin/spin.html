@@ -2,20 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Spin & Win - Taskforce Tournament</title>
+  <title>Spin & Win - Taskforce</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      background: #111;
+      background: #0f0f0f;
       color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
       padding: 20px;
+    }
+
+    h2 {
+      color: #00ffc8;
+      font-size: 28px;
     }
 
     .wheel-container {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 400px;
+      height: 400px;
       margin: 40px auto;
     }
 
@@ -24,21 +29,34 @@
       height: 100%;
       border-radius: 50%;
       border: 10px solid #fff;
-      box-shadow: 0 0 20px #00ffc8;
       background: conic-gradient(
-        #ff4757 0deg 60deg,
-        #ffa502 60deg 120deg,
-        #2ed573 120deg 180deg,
-        #1e90ff 180deg 240deg,
-        #5352ed 240deg 300deg,
-        #ff6b81 300deg 360deg
+        #ff4757 0deg 45deg,
+        #2ed573 45deg 90deg,
+        #1e90ff 90deg 135deg,
+        #ffa502 135deg 180deg,
+        #ff6b81 180deg 225deg,
+        #5352ed 225deg 270deg,
+        #2f3542 270deg 315deg,
+        #70a1ff 315deg 360deg
       );
       transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+      position: relative;
+    }
+
+    .wheel span {
+      position: absolute;
+      width: 100px;
+      left: 50%;
+      top: 50%;
+      transform-origin: left center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
     }
 
     .pointer {
       position: absolute;
-      top: -20px;
+      top: -30px;
       left: 50%;
       transform: translateX(-50%);
       width: 0; height: 0;
@@ -70,7 +88,17 @@
   <h2>🎯 Spin & Win Points!</h2>
   <div class="wheel-container">
     <div class="pointer"></div>
-    <div class="wheel" id="wheel"></div>
+    <div class="wheel" id="wheel">
+      <!-- Labels -->
+      <span style="transform: rotate(22.5deg) translateX(140px);">5</span>
+      <span style="transform: rotate(67.5deg) translateX(140px);">10</span>
+      <span style="transform: rotate(112.5deg) translateX(140px);">15</span>
+      <span style="transform: rotate(157.5deg) translateX(140px);">20</span>
+      <span style="transform: rotate(202.5deg) translateX(140px);">50</span>
+      <span style="transform: rotate(247.5deg) translateX(140px);">100</span>
+      <span style="transform: rotate(292.5deg) translateX(140px);">Miss</span>
+      <span style="transform: rotate(337.5deg) translateX(140px);">25</span>
+    </div>
   </div>
   <button id="spinBtn">SPIN NOW</button>
   <div id="result"></div>
@@ -80,7 +108,7 @@
     const spinBtn = document.getElementById('spinBtn');
     const result = document.getElementById('result');
 
-    const segments = [5, 10, 15, 20, 50, 100];
+    const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
     const anglePerSegment = 360 / segments.length;
 
     let isSpinning = false;
@@ -97,10 +125,12 @@
       wheel.style.transform = `rotate(${stopAngle}deg)`;
 
       setTimeout(() => {
-        result.innerText = `🎉 You won ${segments[randomIndex]} Points!`;
+        if (segments[randomIndex] === 'Miss') {
+          result.innerText = `😢 Sorry, you missed! Try again.`;
+        } else {
+          result.innerText = `🎉 You won ${segments[randomIndex]} Points!`;
+        }
         isSpinning = false;
-
-        // ভবিষ্যতে এখানে Firebase-এ পয়েন্ট সেভ করার কোড যুক্ত হবে
       }, 5000);
     });
   </script>
