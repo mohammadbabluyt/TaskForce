@@ -1,132 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>3D Spin & Win</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      margin: 0; padding: 0;
-      background: radial-gradient(circle, #1b2735 0%, #090a0f 100%);
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      height: 100vh;
-    }
-    h2 {
-      margin-bottom: 20px;
-      font-size: 28px;
-      color: #00e0ff;
-      text-shadow: 0 0 10px #00e0ff;
-    }
-    .wheel-container {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      perspective: 1000px;
-    }
-    .wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: conic-gradient(
-        #00bcd4 0deg 45deg,
-        #4caf50 45deg 90deg,
-        #ff9800 90deg 135deg,
-        #f44336 135deg 180deg,
-        #9c27b0 180deg 225deg,
-        #2196f3 225deg 270deg,
-        #607d8b 270deg 315deg,
-        #ffc107 315deg 360deg
-      );
-      border: 8px solid #fff;
-      transform-style: preserve-3d;
-      transition: transform 4s ease-out;
-      position: relative;
-    }
-    .wheel span {
-      position: absolute;
-      width: 80px;
-      left: 50%;
-      top: 50%;
-      transform-origin: left center;
-      font-size: 14px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 1px 1px 3px #000;
-    }
-    .pointer {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0; height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 30px solid #00e0ff;
-    }
-    #spinBtn {
-      margin-top: 30px;
-      padding: 12px 30px;
-      font-size: 18px;
-      background: #00e0ff;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 224, 255, 0.5);
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #00ff88;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accurate Spinner</title>
+<style>
+  body {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 40px 0;
+  }
+  .wheel-container {
+    position: relative;
+    margin: 0 auto;
+    width: 320px;
+    height: 320px;
+  }
+  #wheel {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    border: 8px solid #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  /* Wheel sectors using conic-gradient */
+  #wheel {
+    background: conic-gradient(
+      #FF6F61 0deg 45deg,
+      #6B5B95 45deg 90deg,
+      #88B04B 90deg 135deg,
+      #F7CAC9 135deg 180deg,
+      #92A8D1 180deg 225deg,
+      #955251 225deg 270deg,
+      #B565A7 270deg 315deg,
+      #009B77 315deg 360deg
+    );
+  }
+  /* Labels */
+  .label {
+    position: absolute;
+    width: 80px;
+    height: 30px;
+    top: 50%;
+    left: 50%;
+    margin-left: -40px;
+    margin-top: -15px;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+    pointer-events: none;
+  }
+  /* Position labels at correct angle */
+  .label1 { transform: rotate(22.5deg) translate(140px) rotate(-22.5deg); }
+  .label2 { transform: rotate(67.5deg) translate(140px) rotate(-67.5deg); }
+  .label3 { transform: rotate(112.5deg) translate(140px) rotate(-112.5deg); }
+  .label4 { transform: rotate(157.5deg) translate(140px) rotate(-157.5deg); }
+  .label5 { transform: rotate(202.5deg) translate(140px) rotate(-202.5deg); }
+  .label6 { transform: rotate(247.5deg) translate(140px) rotate(-247.5deg); }
+  .label7 { transform: rotate(292.5deg) translate(140px) rotate(-292.5deg); }
+  .label8 { transform: rotate(337.5deg) translate(140px) rotate(-337.5deg); }
+
+  /* Pointer as downward bow */
+  .pointer {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 0; 
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-top: 35px solid #00e0ff;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 0 5px #00e0ff);
+  }
+
+  #spinBtn {
+    margin-top: 30px;
+    padding: 14px 40px;
+    font-size: 20px;
+    background: #00e0ff;
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 224, 255, 0.6);
+    transition: background 0.3s;
+  }
+  #spinBtn:hover {
+    background: #00b8cc;
+  }
+  #result {
+    margin-top: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #0f0;
+    min-height: 40px;
+    text-shadow: 1px 1px 5px #000;
+  }
+</style>
 </head>
 <body>
-  <h2>Spin to Win Points!</h2>
-  <div class="wheel-container">
-    <div class="pointer"></div>
-    <div class="wheel" id="wheel">
-      <span style="transform: rotate(22.5deg) translateX(120px);">5</span>
-      <span style="transform: rotate(67.5deg) translateX(120px);">10</span>
-      <span style="transform: rotate(112.5deg) translateX(120px);">15</span>
-      <span style="transform: rotate(157.5deg) translateX(120px);">20</span>
-      <span style="transform: rotate(202.5deg) translateX(120px);">50</span>
-      <span style="transform: rotate(247.5deg) translateX(120px);">100</span>
-      <span style="transform: rotate(292.5deg) translateX(120px);">Miss</span>
-      <span style="transform: rotate(337.5deg) translateX(120px);">25</span>
-    </div>
+
+<h1>Spin & Win</h1>
+<div class="wheel-container">
+  <div class="pointer"></div>
+  <div id="wheel">
+    <div class="label label1">5</div>
+    <div class="label label2">10</div>
+    <div class="label label3">15</div>
+    <div class="label label4">20</div>
+    <div class="label label5">50</div>
+    <div class="label label6">100</div>
+    <div class="label label7">Miss</div>
+    <div class="label label8">25</div>
   </div>
-  <button id="spinBtn">SPIN</button>
-  <div id="result"></div>
+</div>
 
-  <script>
-    const wheel = document.getElementById('wheel');
-    const spinBtn = document.getElementById('spinBtn');
-    const result = document.getElementById('result');
-    const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
-    const anglePerSegment = 360 / segments.length;
-    let isSpinning = false;
+<button id="spinBtn">SPIN</button>
+<div id="result"></div>
 
-    spinBtn.addEventListener('click', () => {
-      if (isSpinning) return;
-      isSpinning = true;
-      result.innerText = "Spinning...";
+<script>
+  const wheel = document.getElementById('wheel');
+  const spinBtn = document.getElementById('spinBtn');
+  const result = document.getElementById('result');
 
-      const randomIndex = Math.floor(Math.random() * segments.length);
-      const stopAngle = (360 * 4) + (anglePerSegment * randomIndex) + (anglePerSegment / 2);
-      wheel.style.transform = `rotate(${stopAngle}deg)`;
+  const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
+  const segmentAngle = 360 / segments.length;
+  let spinning = false;
+  let currentRotation = 0;
 
-      setTimeout(() => {
-        const value = segments[randomIndex];
-        result.innerText = (value === 'Miss')
-          ? '🙁 You missed! Try again.'
-          : `🎉 You won ${value} Points!`;
-        isSpinning = false;
-      }, 4000);
-    });
-  </script>
+  spinBtn.addEventListener('click', () => {
+    if(spinning) return;
+    spinning = true;
+    result.textContent = "Spinning...";
+
+    // Random segment index for result
+    const randomIndex = Math.floor(Math.random() * segments.length);
+
+    // Calculate rotation needed:
+    // We want wheel to stop so that the selected segment aligns with pointer at top (0deg).
+    // Pointer is at 0 deg. Each segment is segmentAngle deg wide.
+    // The rotation is currentRotation + (360 * 5 full spins) + (360 - (segmentAngle * randomIndex + segmentAngle/2))
+    // 360 - ... to compensate for pointer at top.
+
+    const spins = 5;
+    const stopAt = (spins * 360) + (360 - (randomIndex * segmentAngle + segmentAngle/2));
+
+    currentRotation = (currentRotation + stopAt) % 3600; // keep large number mod 3600 to avoid overflow
+
+    wheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+    setTimeout(() => {
+      const value = segments[randomIndex];
+      if(value === "Miss") {
+        result.textContent = "🙁 You missed! Try again.";
+        result.style.color = "#ff4444";
+      } else {
+        result.textContent = `🎉 You won ${value} Points!`;
+        result.style.color = "#0f0";
+      }
+      spinning = false;
+    }, 5000);
+  });
+</script>
+
 </body>
 </html>
