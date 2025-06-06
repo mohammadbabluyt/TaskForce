@@ -5,146 +5,93 @@
   <title>Taskforce Spin & Earn</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    /* --- Basic Reset & Layout --- */
     body {
       background: #121212;
       color: #eee;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
       min-height: 100vh;
-      justify-content: flex-start;
+      justify-content: center;
+      user-select: none;
     }
-    h1 {
-      margin-bottom: 10px;
+    #wheelContainer {
+      margin-bottom: 20px;
+      width: 320px;
+      height: 320px;
+      position: relative;
     }
-    #userInfo {
-      margin-bottom: 15px;
-      font-size: 18px;
-      color: #4caf50;
+    canvas {
+      border-radius: 50%;
+      background: #222;
+      box-shadow: 0 0 15px #00e0ffaa;
+      display: block;
+      margin: 0 auto;
     }
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      margin: 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-weight: 600;
-    }
-    #loginBtn {
-      background-color: #4285F4;
-      color: white;
-      width: 220px;
+    #pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 30px solid #00e0ff;
+      filter: drop-shadow(0 0 4px #00e0ff);
+      z-index: 10;
     }
     #spinBtn {
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
       background-color: #00e0ff;
       color: black;
-      width: 220px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 200px;
+      margin-bottom: 20px;
     }
     #spinBtn:disabled {
       background-color: #555;
       cursor: not-allowed;
     }
+    #loginBtn {
+      background-color: #4285F4;
+      color: white;
+      width: 200px;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    #loginBtn:hover, #spinBtn:hover:not(:disabled) {
+      background-color: #00c7e0;
+    }
+    #userInfo {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #0f0;
+      min-height: 24px;
+      text-align: center;
+      max-width: 300px;
+      word-wrap: break-word;
+    }
     #result {
-      margin-top: 25px;
+      margin-top: 10px;
       font-size: 22px;
       font-weight: bold;
-      min-height: 60px;
+      min-height: 50px;
+      max-width: 320px;
       text-align: center;
-      max-width: 320px;
-      min-height: 70px;
-    }
-    #wheelContainer {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      margin: 25px 0 10px 0;
-      user-select: none;
-    }
-    #wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 8px solid #00e0ff;
-      box-shadow: 0 0 15px #00e0ffaa;
-      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
-    }
-    #pointer {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0; 
-      height: 0; 
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 35px solid #00e0ff;
-      filter: drop-shadow(0 0 4px #00e0ff);
-      z-index: 10;
-    }
-    #wallet {
-      background: #222;
-      padding: 15px;
-      border-radius: 12px;
-      max-width: 320px;
-      margin-top: 30px;
-      box-shadow: 0 0 15px #00e0ffaa;
-    }
-    #wallet h2 {
-      margin-bottom: 12px;
       color: #00e0ff;
-    }
-    #pointsDisplay {
-      font-size: 20px;
-      margin-bottom: 12px;
-      font-weight: 700;
-      color: #0ff;
-    }
-    #redeemSection {
-      margin-top: 15px;
-    }
-    #redeemSection input, #redeemSection button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-    #redeemSection button {
-      background-color: #00e0ff;
-      color: black;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    #redeemSection button:disabled {
-      background-color: #555;
-      cursor: not-allowed;
-    }
-    #spinLimitNotice {
-      font-size: 14px;
-      color: #bbb;
-      margin-top: 10px;
-      text-align: center;
-    }
-    /* Ad placeholder */
-    #adContainer {
-      width: 320px;
-      height: 50px;
-      margin-top: 25px;
-      background: #111;
-      border-radius: 8px;
-      border: 2px solid #00e0ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #00e0ffaa;
-      font-weight: 600;
-      user-select: none;
+      text-shadow: 0 0 5px #00e0ff;
+      user-select: text;
     }
   </style>
 </head>
@@ -153,30 +100,15 @@
   <h1>Taskforce Spin & Earn</h1>
 
   <div id="userInfo"></div>
-
   <button id="loginBtn">Login with Google</button>
-  <button id="spinBtn" disabled>Spin the Wheel</button>
-  <div id="spinLimitNotice"></div>
 
   <div id="wheelContainer">
     <div id="pointer"></div>
-    <canvas id="wheel" width="300" height="300"></canvas>
+    <canvas id="wheel" width="320" height="320"></canvas>
   </div>
 
+  <button id="spinBtn" disabled>Spin to Earn Points</button>
   <div id="result"></div>
-
-  <div id="wallet" style="display:none;">
-    <h2>Your Wallet</h2>
-    <div id="pointsDisplay">Points: 0</div>
-
-    <div id="redeemSection">
-      <input type="text" id="redeemPhone" placeholder="Enter phone number for redeem" maxlength="15" />
-      <button id="redeemBtn" disabled>Redeem Points (Min 100)</button>
-      <div id="redeemMsg" style="margin-top:8px; font-size:14px; color:#0f0;"></div>
-    </div>
-  </div>
-
-  <div id="adContainer">Ad Placeholder - Integrate your Ad here</div>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -184,7 +116,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Paste your Firebase config here:
+    // Firebase config - আপনার প্রোজেক্টের কনফিগ এখানে বসান
     const firebaseConfig = {
       apiKey: "AIzaSyD786-l7KQNCEQvxjwEHLw5GxNmW33zYBQ",
       authDomain: "taskforceweb-5c958.firebaseapp.com",
@@ -204,324 +136,259 @@
     const spinBtn = document.getElementById('spinBtn');
     const resultDiv = document.getElementById('result');
     const userInfo = document.getElementById('userInfo');
-    const pointsDisplay = document.getElementById('pointsDisplay');
-    const walletSection = document.getElementById('wallet');
-    const redeemPhone = document.getElementById('redeemPhone');
-    const redeemBtn = document.getElementById('redeemBtn');
-    const redeemMsg = document.getElementById('redeemMsg');
-    const spinLimitNotice = document.getElementById('spinLimitNotice');
 
-    // Wheel setup
+    // স্পিন লিমিট - দৈনিক ৩ বার
+    const DAILY_SPIN_LIMIT = 3;
+
+    // হুইল এর সেগমেন্ট এবং লেবেল+রং + পয়েন্ট ম্যাপ
+    const segments = [
+      { label: "Jackpot", color: "#ff3b3b", points: 100 },
+      { label: "Bonus", color: "#3b7fff", points: 50 },
+      { label: "Try Again", color: "#3bff7f", points: 0 },
+      { label: "Small Win", color: "#ffb13b", points: 10 },
+      { label: "Bonus", color: "#8a3bff", points: 50 },
+      { label: "Try Again", color: "#3bffea", points: 0 },
+      { label: "Small Win", color: "#ff6a3b", points: 10 },
+      { label: "Jackpot", color: "#ff3b3b", points: 100 }
+    ];
+
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
-    const wheelRadius = 140;
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const segments = [
-      { label: "5", color: "#1abc9c", points: 5 },
-      { label: "10", color: "#2ecc71", points: 10 },
-      { label: "15", color: "#3498db", points: 15 },
-      { label: "20", color: "#9b59b6", points: 20 },
-      { label: "50", color: "#f1c40f", points: 50 },
-      { label: "100", color: "#e67e22", points: 100 },
-      { label: "MISS", color: "#e74c3c", points: 0 },
-      { label: "25", color: "#34495e", points: 25 }
-    ];
-    const segmentCount = segments.length;
-    const anglePerSegment = (2 * Math.PI) / segmentCount;
+    const radius = 150;
 
-    // Draw wheel
+    let startAngle = 0;
+    let arc = (2 * Math.PI) / segments.length;
+    let isSpinning = false;
+
+    // Draw wheel function
     function drawWheel() {
-      for(let i = 0; i < segmentCount; i++) {
-        const startAngle = i * anglePerSegment;
-        const endAngle = startAngle + anglePerSegment;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw segment
+      segments.forEach((seg, i) => {
+        let angle = startAngle + i * arc;
+        // draw slice
         ctx.beginPath();
+        ctx.fillStyle = seg.color;
         ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, wheelRadius, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fillStyle = segments[i].color;
+        ctx.arc(centerX, centerY, radius, angle, angle + arc);
+        ctx.lineTo(centerX, centerY);
         ctx.fill();
 
-        // Draw text
+        // draw label
         ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(startAngle + anglePerSegment / 2);
-        ctx.fillStyle = "white";
-        ctx.font = "bold 18px Arial";
-        ctx.textAlign = "right";
-        ctx.fillText(segments[i].label, wheelRadius - 10, 10);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 16px Arial";
+        ctx.translate(
+          centerX + Math.cos(angle + arc / 2) * (radius - 40),
+          centerY + Math.sin(angle + arc / 2) * (radius - 40)
+        );
+        ctx.rotate(angle + arc / 2 + Math.PI / 2);
+        ctx.textAlign = "center";
+        ctx.fillText(seg.label, 0, 0);
         ctx.restore();
-      }
+      });
+
+      // outer circle border
+      ctx.beginPath();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "#00e0ff";
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
     }
 
     drawWheel();
 
-    // Spin Variables
-    let currentAngle = 0;
-    let spinning = false;
-    const maxSpinsPerDay = 5;
-
-    // Authentication & UI update
-    loginBtn.addEventListener('click', () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => {
-          updateUI(result.user);
-          loadUserData(result.user.uid);
-        })
-        .catch(err => alert("Login failed: " + err.message));
-    });
-
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        updateUI(user);
-        loadUserData(user.uid);
-      } else {
-        updateUI(null);
-      }
-    });
-
-    let userPoints = 0;
-    let spinsToday = 0;
-
-    function updateUI(user) {
-      if (user) {
-        userInfo.textContent = `Welcome, ${user.displayName}`;
-        loginBtn.style.display = 'none';
-        spinBtn.disabled = false;
-        walletSection.style.display = 'block';
-        checkSpinLimit();
-      } else {
-        userInfo.textContent = '';
-        loginBtn.style.display = 'inline-block';
-        spinBtn.disabled = true;
-        walletSection.style.display = 'none';
-        resultDiv.textContent = '';
-        spinLimitNotice.textContent = '';
-      }
-    }
-
-    // Load user points & spins from Firestore
-    async function loadUserData(uid) {
-      try {
-        const userDoc = await db.collection('users').doc(uid).get();
-        if (userDoc.exists) {
-          const data = userDoc.data();
-          userPoints = data.points || 0;
-          pointsDisplay.textContent = "Points: " + userPoints;
-
-          // Check spins today
-          const lastSpinDate = data.lastSpinDate || null;
-          const spinCount = data.spinCount || 0;
-          const todayStr = new Date().toISOString().slice(0,10);
-
-          if (lastSpinDate === todayStr) {
-            spinsToday = spinCount;
-          } else {
-            spinsToday = 0;
-          }
-          checkSpinLimit();
-        } else {
-          userPoints = 0;
-          spinsToday = 0;
-          pointsDisplay.textContent = "Points: 0";
-          checkSpinLimit();
-        }
-      } catch (e) {
-        console.error("Error loading user data:", e);
-      }
-    }
-
-    // Check if spin limit reached
-    function checkSpinLimit() {
-      if (spinsToday >= maxSpinsPerDay) {
-        spinBtn.disabled = true;
-        spinLimitNotice.textContent = `Daily spin limit reached (${maxSpinsPerDay}). Try again tomorrow!`;
-      } else {
-        spinBtn.disabled = false;
-        spinLimitNotice.textContent = `Spins left today: ${maxSpinsPerDay - spinsToday}`;
-      }
-    }
-
-    // Spin wheel logic
-    spinBtn.addEventListener('click', async () => {
-      if (spinning) return;
-      spinning = true;
+    // Spin animation
+    function spinWheel() {
+      if (isSpinning) return;
+      isSpinning = true;
       spinBtn.disabled = true;
-      resultDiv.textContent = "Spinning...";
+      resultDiv.innerText = "";
 
-      // Spin animation
-      // Full rotations + random segment
-      const spins = 5 + Math.floor(Math.random() * 5);
-      const randomSegmentIndex = Math.floor(Math.random() * segmentCount);
-      const segmentAngle = randomSegmentIndex * anglePerSegment;
+      // Spin parameters
+      let spinTimeTotal = 5000; // spin duration 5 seconds
+      let spinTime = 0;
+      let spinAngleStart = Math.random() * 10 + 20; // initial spin speed
 
-      // Calculate target angle: spins full rounds + offset so chosen segment is at pointer (top)
-      const targetAngle = (spins * 2 * Math.PI) + (2 * Math.PI - segmentAngle - anglePerSegment / 2);
-
-      // Animate using CSS transform on canvas container
-      let start = null;
-      const duration = 4000; // ms
-
-      function animate(timestamp) {
-        if (!start) start = timestamp;
-        const elapsed = timestamp - start;
-        if (elapsed < duration) {
-          // easing function (easeOutCubic)
-          const t = elapsed / duration;
-          const ease = 1 - Math.pow(1 - t, 3);
-          currentAngle = ease * targetAngle;
-          canvas.style.transform = `rotate(${currentAngle}rad)`;
-          requestAnimationFrame(animate);
-        } else {
-          currentAngle = targetAngle % (2 * Math.PI);
-          canvas.style.transform = `rotate(${currentAngle}rad)`;
-          finishSpin(randomSegmentIndex);
-          spinning = false;
-          checkSpinLimit();
+      function rotate() {
+        spinTime += 30;
+        if (spinTime >= spinTimeTotal) {
+          stopRotateWheel();
+          return;
         }
+        // easing spin speed deceleration
+        let spinAngle =
+          spinAngleStart * (1 - easeOut(spinTime / spinTimeTotal));
+
+        startAngle += (spinAngle * Math.PI) / 180;
+        drawWheel();
+        requestAnimationFrame(rotate);
       }
 
-      requestAnimationFrame(animate);
-    });
-
-    // After spin finishes
-    async function finishSpin(segmentIndex) {
-      const segment = segments[segmentIndex];
-      if (segment.points > 0) {
-        resultDiv.textContent = `You won ${segment.points} points! 🎉`;
-
-        // Update Firestore points and spins
-        const user = auth.currentUser;
-        if (!user) return;
-
-        try {
-          const userRef = db.collection('users').doc(user.uid);
-          const todayStr = new Date().toISOString().slice(0,10);
-
-          await db.runTransaction(async (transaction) => {
-            const doc = await transaction.get(userRef);
-            let newPoints = segment.points;
-            let newSpinCount = 1;
-
-            if (doc.exists) {
-              const data = doc.data();
-              if (data.lastSpinDate === todayStr) {
-                newSpinCount = data.spinCount + 1;
-                newPoints += data.points;
-              }
-            }
-            transaction.set(userRef, {
-              points: newPoints,
-              lastSpinDate: todayStr,
-              spinCount: newSpinCount
-            }, { merge: true });
-            userPoints = newPoints;
-            spinsToday = newSpinCount;
-          });
-          pointsDisplay.textContent = "Points: " + userPoints;
-        } catch(e) {
-          console.error("Transaction failed: ", e);
-        }
-      } else {
-        resultDiv.textContent = "You missed! Try again.";
-        spinsToday++;
-        // Update spinCount even on miss
-        const user = auth.currentUser;
-        if (user) {
-          try {
-            const userRef = db.collection('users').doc(user.uid);
-            const todayStr = new Date().toISOString().slice(0,10);
-
-            await db.runTransaction(async (transaction) => {
-              const doc = await transaction.get(userRef);
-              let newSpinCount = 1;
-
-              if (doc.exists) {
-                const data = doc.data();
-                if (data.lastSpinDate === todayStr) {
-                  newSpinCount = data.spinCount + 1;
-                }
-              }
-              transaction.set(userRef, {
-                lastSpinDate: todayStr,
-                spinCount: newSpinCount
-              }, { merge: true });
-              spinsToday = newSpinCount;
-            });
-          } catch(e) {
-            console.error("Transaction failed: ", e);
-          }
-        }
-      }
-      checkSpinLimit();
-      spinBtn.disabled = spinsToday >= maxSpinsPerDay;
+      requestAnimationFrame(rotate);
     }
 
-    // Redeem functionality
-    redeemPhone.addEventListener('input', () => {
-      redeemMsg.textContent = "";
-      if (redeemPhone.value.trim().length > 5 && userPoints >= 100) {
-        redeemBtn.disabled = false;
-      } else {
-        redeemBtn.disabled = true;
-      }
-    });
+    // easing function for smooth deceleration
+    function easeOut(t) {
+      return t * (2 - t);
+    }
 
-    redeemBtn.addEventListener('click', async () => {
-      redeemBtn.disabled = true;
-      redeemMsg.style.color = '#0f0';
-      redeemMsg.textContent = "Submitting redeem request...";
+    function stopRotateWheel() {
+      // Normalize angle
+      startAngle = startAngle % (2 * Math.PI);
 
+      // Calculate which segment is selected
+      let index = Math.floor(
+        segments.length - (startAngle / (2 * Math.PI)) * segments.length
+      );
+      if (index >= segments.length) index = index % segments.length;
+
+      const winningSegment = segments[index];
+
+      // Show result & save points
       const user = auth.currentUser;
       if (!user) {
-        redeemMsg.style.color = '#f00';
-        redeemMsg.textContent = "Please login first.";
-        return;
-      }
-      const phone = redeemPhone.value.trim();
-      if (phone.length < 6) {
-        redeemMsg.style.color = '#f00';
-        redeemMsg.textContent = "Please enter a valid phone number.";
-        redeemBtn.disabled = false;
-        return;
-      }
-      if (userPoints < 100) {
-        redeemMsg.style.color = '#f00';
-        redeemMsg.textContent = "You need at least 100 points to redeem.";
-        redeemBtn.disabled = false;
+        alert("Please login first!");
+        isSpinning = false;
+        spinBtn.disabled = false;
         return;
       }
 
-      try {
-        // Create a redeem request doc
-        await db.collection('redeemRequests').add({
-          uid: user.uid,
-          name: user.displayName,
-          phone: phone,
-          points: userPoints,
-          requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
-          status: 'pending'
+      // Check daily spin limit from Firestore
+      checkDailySpinLimit(user.uid)
+        .then((canSpin) => {
+          if (!canSpin) {
+            resultDiv.innerText = "😞 You reached your daily spin limit.";
+            isSpinning = false;
+            spinBtn.disabled = false;
+            return;
+          }
+
+          // Save points & increment spin count
+          saveSpinResult(user.uid, winningSegment.points)
+            .then(() => {
+              if (winningSegment.points === 0) {
+                resultDiv.innerText = `😔 You landed on "${winningSegment.label}". No points this time.`;
+              } else {
+                resultDiv.innerText = `🎉 You won ${winningSegment.points} points from "${winningSegment.label}"!`;
+              }
+              isSpinning = false;
+              spinBtn.disabled = false;
+            })
+            .catch((err) => {
+              alert("Error saving points: " + err.message);
+              isSpinning = false;
+              spinBtn.disabled = false;
+            });
+        })
+        .catch((err) => {
+          alert("Error checking spin limit: " + err.message);
+          isSpinning = false;
+          spinBtn.disabled = false;
         });
+    }
 
-        // Reset user points after redeem request
-        const userRef = db.collection('users').doc(user.uid);
-        await userRef.update({ points: 0 });
-        userPoints = 0;
-        pointsDisplay.textContent = "Points: 0";
+    // Firestore functions
 
-        redeemMsg.textContent = "Redeem request submitted! We will contact you soon.";
-        redeemPhone.value = '';
-        redeemBtn.disabled = true;
-      } catch (e) {
-        redeemMsg.style.color = '#f00';
-        redeemMsg.textContent = "Error submitting redeem request. Try again later.";
-        console.error(e);
-        redeemBtn.disabled = false;
+    async function checkDailySpinLimit(userId) {
+      // Check how many spins user did today
+      const docRef = db.collection("users").doc(userId);
+      const docSnap = await docRef.get();
+
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      if (!docSnap.exists) {
+        // create new user doc with spins data
+        await docRef.set({
+          spins: {
+            [todayStr]: 0,
+          },
+          points: 0,
+        });
+        return true;
+      } else {
+        const data = docSnap.data();
+        const spins = data.spins || {};
+        const spinsToday = spins[todayStr] || 0;
+
+        return spinsToday < DAILY_SPIN_LIMIT;
+      }
+    }
+
+    async function saveSpinResult(userId, points) {
+      const docRef = db.collection("users").doc(userId);
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      return db.runTransaction(async (transaction) => {
+        const doc = await transaction.get(docRef);
+        if (!doc.exists) {
+          transaction.set(docRef, {
+            spins: {
+              [todayStr]: 1,
+            },
+            points: points,
+          });
+        } else {
+          const data = doc.data();
+          let spins = data.spins || {};
+          let pointsTotal = data.points || 0;
+          spins[todayStr] = (spins[todayStr] || 0) + 1;
+          pointsTotal += points;
+          transaction.update(docRef, {
+            spins: spins,
+            points: pointsTotal,
+          });
+        }
+      });
+    }
+
+    // Login with Google
+    loginBtn.addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          userInfo.textContent = `Logged in as: ${user.email}`;
+          loginBtn.style.display = "none";
+          spinBtn.disabled = false;
+          loadUserPoints(user.uid);
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
+        });
+    });
+
+    // Load user points
+    async function loadUserPoints(userId) {
+      const docRef = db.collection("users").doc(userId);
+      const docSnap = await docRef.get();
+      if (docSnap.exists) {
+        const data = docSnap.data();
+        resultDiv.innerText = `Your current points: ${data.points || 0}`;
+      } else {
+        resultDiv.innerText = "No points yet. Spin to earn!";
+      }
+    }
+
+    // Check auth state on load
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        userInfo.textContent = `Logged in as: ${user.email}`;
+        loginBtn.style.display = "none";
+        spinBtn.disabled = false;
+        loadUserPoints(user.uid);
+      } else {
+        userInfo.textContent = "";
+        loginBtn.style.display = "inline-block";
+        spinBtn.disabled = true;
+        resultDiv.innerText = "";
       }
     });
+
+    // Spin button click
+    spinBtn.addEventListener("click", spinWheel);
   </script>
 </body>
 </html>
