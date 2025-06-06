@@ -2,57 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Spin & Win - Taskforce</title>
+  <title>3D Spin & Win</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom right, #001f3f, #0074D9);
+      background: radial-gradient(circle, #1b2735 0%, #090a0f 100%);
       font-family: 'Segoe UI', sans-serif;
-      text-align: center;
       color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
 
     h2 {
-      font-size: 36px;
-      margin-top: 30px;
-      color: #ffdc00;
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #00e0ff;
+      text-shadow: 0 0 10px #00e0ff;
     }
 
     .wheel-container {
       position: relative;
-      width: 500px;
-      height: 500px;
-      margin: 40px auto;
+      width: 300px;
+      height: 300px;
+      perspective: 1000px;
     }
 
     .wheel {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 12px solid #fff;
       background: conic-gradient(
-        #ff4136 0deg 45deg,
-        #2ecc40 45deg 90deg,
-        #0074D9 90deg 135deg,
-        #ff851b 135deg 180deg,
-        #b10dc9 180deg 225deg,
-        #7fdbff 225deg 270deg,
-        #111111 270deg 315deg,
-        #01ff70 315deg 360deg
+        #00bcd4 0deg 45deg,
+        #4caf50 45deg 90deg,
+        #ff9800 90deg 135deg,
+        #f44336 135deg 180deg,
+        #9c27b0 180deg 225deg,
+        #2196f3 225deg 270deg,
+        #607d8b 270deg 315deg,
+        #ffc107 315deg 360deg
       );
-      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+      border: 8px solid #fff;
+      transform-style: preserve-3d;
+      transition: transform 4s ease-out;
       position: relative;
     }
 
     .wheel span {
       position: absolute;
-      width: 120px;
+      width: 80px;
       left: 50%;
       top: 50%;
       transform-origin: left center;
-      font-size: 18px;
+      font-size: 14px;
       font-weight: bold;
       color: #fff;
       text-shadow: 1px 1px 3px #000;
@@ -60,110 +66,76 @@
 
     .pointer {
       position: absolute;
-      top: -40px;
+      top: -30px;
       left: 50%;
       transform: translateX(-50%);
       width: 0; height: 0;
-      border-left: 25px solid transparent;
-      border-right: 25px solid transparent;
-      border-bottom: 40px solid #ffffff;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 30px solid #00e0ff;
     }
 
     #spinBtn {
-      padding: 16px 40px;
-      font-size: 24px;
-      background: #ffdc00;
+      margin-top: 30px;
+      padding: 12px 30px;
+      font-size: 18px;
+      background: #00e0ff;
       color: #000;
       border: none;
-      border-radius: 10px;
-      margin-top: 60px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      transition: transform 0.2s;
-    }
-
-    #spinBtn:hover {
-      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 224, 255, 0.5);
     }
 
     #result {
-      margin-top: 30px;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    @media(max-width: 600px) {
-      .wheel-container {
-        width: 300px;
-        height: 300px;
-      }
-
-      .wheel span {
-        font-size: 12px;
-        width: 80px;
-        transform: rotate(var(--angle)) translateX(80px);
-      }
-
-      #spinBtn {
-        padding: 14px 30px;
-        font-size: 20px;
-      }
-
-      h2 {
-        font-size: 26px;
-      }
+      margin-top: 20px;
+      font-size: 20px;
+      color: #00ff88;
     }
   </style>
 </head>
 <body>
-  <h2>🎯 Spin & Win Points!</h2>
+  <h2>Spin to Win Points!</h2>
   <div class="wheel-container">
     <div class="pointer"></div>
     <div class="wheel" id="wheel">
-      <!-- Labels -->
-      <span style="transform: rotate(22.5deg) translateX(170px);">5</span>
-      <span style="transform: rotate(67.5deg) translateX(170px);">10</span>
-      <span style="transform: rotate(112.5deg) translateX(170px);">15</span>
-      <span style="transform: rotate(157.5deg) translateX(170px);">20</span>
-      <span style="transform: rotate(202.5deg) translateX(170px);">50</span>
-      <span style="transform: rotate(247.5deg) translateX(170px);">100</span>
-      <span style="transform: rotate(292.5deg) translateX(170px);">Miss</span>
-      <span style="transform: rotate(337.5deg) translateX(170px);">25</span>
+      <span style="transform: rotate(22.5deg) translateX(120px);">5</span>
+      <span style="transform: rotate(67.5deg) translateX(120px);">10</span>
+      <span style="transform: rotate(112.5deg) translateX(120px);">15</span>
+      <span style="transform: rotate(157.5deg) translateX(120px);">20</span>
+      <span style="transform: rotate(202.5deg) translateX(120px);">50</span>
+      <span style="transform: rotate(247.5deg) translateX(120px);">100</span>
+      <span style="transform: rotate(292.5deg) translateX(120px);">Miss</span>
+      <span style="transform: rotate(337.5deg) translateX(120px);">25</span>
     </div>
   </div>
-  <button id="spinBtn">SPIN NOW</button>
+  <button id="spinBtn">SPIN</button>
   <div id="result"></div>
 
   <script>
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     const result = document.getElementById('result');
-
     const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
     const anglePerSegment = 360 / segments.length;
-
     let isSpinning = false;
 
     spinBtn.addEventListener('click', () => {
       if (isSpinning) return;
-
       isSpinning = true;
       result.innerText = "Spinning...";
 
       const randomIndex = Math.floor(Math.random() * segments.length);
-      const stopAngle = (360 * 5) + (anglePerSegment * randomIndex) + (anglePerSegment / 2);
-
+      const stopAngle = (360 * 4) + (anglePerSegment * randomIndex) + (anglePerSegment / 2);
       wheel.style.transform = `rotate(${stopAngle}deg)`;
 
       setTimeout(() => {
-        if (segments[randomIndex] === 'Miss') {
-          result.innerText = `😢 Sorry, you missed! Try again.`;
-        } else {
-          result.innerText = `🎉 You won ${segments[randomIndex]} Points!`;
-        }
+        const value = segments[randomIndex];
+        result.innerText = (value === 'Miss')
+          ? '🙁 You missed! Try again.'
+          : `🎉 You won ${value} Points!`;
         isSpinning = false;
-      }, 5000);
+      }, 4000);
     });
   </script>
 </body>
