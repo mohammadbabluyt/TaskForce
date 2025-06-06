@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Spin & Win</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Jackpot Spin & Win</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: radial-gradient(circle, #1b2735 0%, #090a0f 100%);
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       height: 100vh;
+      user-select: none;
     }
 
     h2 {
       margin-bottom: 20px;
-      font-size: 28px;
+      font-size: 32px;
       color: #00e0ff;
       text-shadow: 0 0 10px #00e0ff;
     }
 
     .wheel-container {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 320px;
+      height: 320px;
     }
 
     .wheel {
@@ -46,8 +44,9 @@
         #ffc107 315deg 360deg
       );
       border: 8px solid #fff;
-      transition: transform 4s ease-out;
+      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
       position: relative;
+      box-shadow: 0 0 20px #00e0ff;
     }
 
     .wheel span {
@@ -56,55 +55,76 @@
       left: 50%;
       top: 50%;
       transform-origin: left center;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: bold;
       color: #fff;
-      text-shadow: 1px 1px 3px #000;
+      text-shadow: 1px 1px 4px #000;
+      user-select: none;
     }
 
-    .wheel span:nth-child(1) { transform: rotate(22.5deg) translateX(120px); }
-    .wheel span:nth-child(2) { transform: rotate(67.5deg) translateX(120px); }
-    .wheel span:nth-child(3) { transform: rotate(112.5deg) translateX(120px); }
-    .wheel span:nth-child(4) { transform: rotate(157.5deg) translateX(120px); }
-    .wheel span:nth-child(5) { transform: rotate(202.5deg) translateX(120px); }
-    .wheel span:nth-child(6) { transform: rotate(247.5deg) translateX(120px); }
-    .wheel span:nth-child(7) { transform: rotate(292.5deg) translateX(120px); }
-    .wheel span:nth-child(8) { transform: rotate(337.5deg) translateX(120px); }
+    /* Position each segment text */
+    .wheel span:nth-child(1) { transform: rotate(22.5deg) translateX(130px); }
+    .wheel span:nth-child(2) { transform: rotate(67.5deg) translateX(130px); }
+    .wheel span:nth-child(3) { transform: rotate(112.5deg) translateX(130px); }
+    .wheel span:nth-child(4) { transform: rotate(157.5deg) translateX(130px); }
+    .wheel span:nth-child(5) { transform: rotate(202.5deg) translateX(130px); }
+    .wheel span:nth-child(6) { transform: rotate(247.5deg) translateX(130px); }
+    .wheel span:nth-child(7) { transform: rotate(292.5deg) translateX(130px); }
+    .wheel span:nth-child(8) { transform: rotate(337.5deg) translateX(130px); }
 
     .pointer {
       position: absolute;
-      top: -20px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%) rotate(180deg);
       width: 0;
       height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-top: 25px solid #00e0ff;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 30px solid #00e0ff;
+      filter: drop-shadow(0 0 5px #00e0ff);
       z-index: 10;
+      user-select: none;
     }
 
     #spinBtn {
-      margin-top: 30px;
-      padding: 12px 30px;
-      font-size: 18px;
-      background: #00e0ff;
+      margin-top: 40px;
+      padding: 14px 36px;
+      font-size: 20px;
+      font-weight: bold;
+      background: linear-gradient(45deg, #00e0ff, #0077aa);
       color: #000;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 224, 255, 0.5);
+      box-shadow: 0 6px 15px rgba(0, 224, 255, 0.7);
+      transition: background 0.3s;
+      user-select: none;
+    }
+    #spinBtn:hover:not(:disabled) {
+      background: linear-gradient(45deg, #0077aa, #00e0ff);
+    }
+    #spinBtn:disabled {
+      background: #555;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #ccc;
     }
 
     #result {
-      margin-top: 20px;
-      font-size: 20px;
+      margin-top: 25px;
+      font-size: 24px;
       color: #00ff88;
+      min-height: 32px;
+      user-select: none;
+      text-align: center;
+      text-shadow: 0 0 10px #00ff88;
     }
   </style>
 </head>
 <body>
-  <h2>Spin to Win Points!</h2>
+
+  <h2>Jackpot Spin & Win!</h2>
   <div class="wheel-container">
     <div class="pointer"></div>
     <div class="wheel" id="wheel">
@@ -112,12 +132,13 @@
       <span>10</span>
       <span>15</span>
       <span>20</span>
-      <span>50</span>
+      <span>Jackpot</span>
       <span>100</span>
       <span>Miss</span>
       <span>25</span>
     </div>
   </div>
+
   <button id="spinBtn">SPIN</button>
   <div id="result"></div>
 
@@ -126,7 +147,7 @@
     const spinBtn = document.getElementById('spinBtn');
     const result = document.getElementById('result');
 
-    const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
+    const segments = ['5', '10', '15', '20', 'Jackpot', '100', 'Miss', '25'];
     const anglePerSegment = 360 / segments.length;
     let currentRotation = 0;
     let isSpinning = false;
@@ -134,24 +155,38 @@
     spinBtn.addEventListener('click', () => {
       if (isSpinning) return;
       isSpinning = true;
+      spinBtn.disabled = true;
       result.innerText = "Spinning...";
 
+      // Random index for winning segment
       const randomIndex = Math.floor(Math.random() * segments.length);
-      const extraRotation = 360 * 10; // 10 full spins
+
+      // Spin at least 8 full rotations + stop at random segment (calculate angle)
+      const extraRotation = 360 * 8;
+      // Calculate the stop angle: 
+      // Pointer is at top (0deg), so wheel rotation should be (360 - (segment center angle))
       const stopAngle = 360 - (randomIndex * anglePerSegment + anglePerSegment / 2);
       const totalRotation = currentRotation + extraRotation + stopAngle;
 
+      wheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
       wheel.style.transform = `rotate(${totalRotation}deg)`;
-      currentRotation = totalRotation;
+      currentRotation = totalRotation % 360; // Keep rotation between 0-360
 
+      // After animation ends, show result
       setTimeout(() => {
         const value = segments[randomIndex];
-        result.innerText = value === 'Miss'
-          ? '🙁 You missed! Try again.'
-          : `🎉 You won ${value} Points!`;
+        if(value === 'Jackpot') {
+          result.innerHTML = `🎉🎉 JACKPOT! You won the big prize! 🎉🎉`;
+        } else if(value === 'Miss') {
+          result.innerHTML = `🙁 You missed! Try again.`;
+        } else {
+          result.innerHTML = `🎉 You won ${value} Points!`;
+        }
         isSpinning = false;
-      }, 4000);
+        spinBtn.disabled = false;
+      }, 5000);
     });
   </script>
+
 </body>
 </html>
