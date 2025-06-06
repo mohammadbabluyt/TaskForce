@@ -1,133 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spin & Earn</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Taskforce Spin & Win</title>
 <style>
-  body{margin:0;padding:0;background:#0f172a;color:#fff;font-family:Arial,sans-serif;text-align:center;}
-  h1{padding:20px;color:#22d3ee;}
-  .wheel-container{position:relative;margin:auto;width:250px;height:250px;}
-  #wheel{width:100%;height:100%;border-radius:50%;background:conic-gradient(
-      #10b981 0deg 45deg,#3b82f6 45deg,#f59e0b 90deg,#ef4444 135deg,
-      #6366f1 180deg,#14b8a6 225deg,#e11d48 270deg,#84cc16 315deg
-    );border:5px solid #fff;transition:transform 4s ease-out;}
-  .pointer{position:absolute;top:-20px;left:50%;transform:translateX(-50%) rotate(180deg);
-    width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;
-    border-top:30px solid #22d3ee;}
-  button,input{margin:10px;padding:10px 20px;font-size:16px;background:#22d3ee;color:#000;border:none;border-radius:6px;cursor:pointer;}
-  #wallet,#result{margin:10px;font-size:18px;}
+  body {
+    margin: 0; padding: 0;
+    background: radial-gradient(circle, #1b2735 0%, #090a0f 100%);
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100vh;
+  }
+  h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #00e0ff;
+    text-shadow: 0 0 10px #00e0ff;
+  }
+  .wheel-container {
+    position: relative;
+    width: 300px; height: 300px;
+    perspective: 1000px;
+  }
+  .wheel {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+      #00bcd4 0deg 45deg,
+      #4caf50 45deg 90deg,
+      #ff9800 90deg 135deg,
+      #f44336 135deg 180deg,
+      #9c27b0 180deg 225deg,
+      #2196f3 225deg 270deg,
+      #607d8b 270deg 315deg,
+      #ffc107 315deg 360deg
+    );
+    border: 8px solid #fff;
+    transform-style: preserve-3d;
+    transition: transform 4s ease-out;
+    position: relative;
+  }
+  .wheel span {
+    position: absolute;
+    width: 80px;
+    left: 50%; top: 50%;
+    transform-origin: left center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 3px #000;
+  }
+  .pointer {
+    position: absolute;
+    top: -30px; left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    width: 0; height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 30px solid #00e0ff;
+    z-index: 10;
+  }
+  #spinBtn, #loginBtn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 18px;
+    background: #00e0ff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 224, 255, 0.5);
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #00ff88;
+    min-height: 28px;
+  }
 </style>
 </head>
 <body>
+<h2>Taskforce Spin to Win Points!</h2>
 
-<h1>Spin & Earn</h1>
-<button id="googleBtn">Sign in with Google</button>
-<div id="app" style="display:none;">
-  <div id="wallet">Points: 0</div>
-  <div class="wheel-container">
-    <div class="pointer"></div>
-    <div id="wheel"></div>
+<button id="loginBtn">Sign in with Google</button>
+
+<div class="wheel-container" style="display:none;">
+  <div class="pointer"></div>
+  <div class="wheel" id="wheel">
+    <span style="transform: rotate(22.5deg) translateX(120px);">5</span>
+    <span style="transform: rotate(67.5deg) translateX(120px);">10</span>
+    <span style="transform: rotate(112.5deg) translateX(120px);">15</span>
+    <span style="transform: rotate(157.5deg) translateX(120px);">20</span>
+    <span style="transform: rotate(202.5deg) translateX(120px);">50</span>
+    <span style="transform: rotate(247.5deg) translateX(120px);">100</span>
+    <span style="transform: rotate(292.5deg) translateX(120px);">Miss</span>
+    <span style="transform: rotate(337.5deg) translateX(120px);">25</span>
   </div>
-  <button id="spinBtn">SPIN (Watch Ad)</button>
-  <div id="result"></div>
-  <input type="number" id="redeemAmt" placeholder="Redeem points">
-  <button id="redeemBtn">Redeem</button>
 </div>
 
+<button id="spinBtn" style="display:none;">SPIN</button>
+<div id="result"></div>
+
+<!-- Firebase JS SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-  // 🔧 ১. আপনার Firebase প্রোজেক্টের মান বসান এখানে:
+  // ================================
+  // Replace this config with your own Firebase project config
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MSG_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyA4qf9zxmr2c1XcbG4pq0ncnLZLtvT7SeI",
+    authDomain: "taskforce-12345.firebaseapp.com",
+    projectId: "taskforce-12345",
+    storageBucket: "taskforce-12345.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abcdef123456"
   };
+  // ================================
+
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth(), db = firebase.firestore();
 
-  const googleBtn=document.getElementById('googleBtn'),
-        appDiv=document.getElementById('app'),
-        walletDiv=document.getElementById('wallet'),
-        spinBtn=document.getElementById('spinBtn'),
-        resultDiv=document.getElementById('result'),
-        redeemBtn=document.getElementById('redeemBtn');
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  const segments=["5","10","15","20","Miss","50","100","25"],
-        angle=360/segments.length, maxSpins=5;
-  let uid="", rotation=0, spinning=false;
+  const loginBtn = document.getElementById('loginBtn');
+  const spinBtn = document.getElementById('spinBtn');
+  const wheel = document.getElementById('wheel');
+  const result = document.getElementById('result');
+  const wheelContainer = document.querySelector('.wheel-container');
 
-  // 🔐 Google Login
-  googleBtn.onclick = async () => {
-    const provider=new firebase.auth.GoogleAuthProvider();
-    const cred=await auth.signInWithPopup(provider);
-    uid = cred.user.uid;
-    googleBtn.style.display='none';
-    appDiv.style.display='block';
-    updateWallet();
-  };
+  const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
+  const anglePerSegment = 360 / segments.length;
+  let isSpinning = false;
+  let currentUser = null;
 
-  // 🧾 Wallet Update
-  async function updateWallet(){
-    const doc = await db.collection('users').doc(uid).get();
-    if(!doc.exists) await db.collection('users').doc(uid).set({points:0,spins:{},redeems:[]});
-    const data = (await db.collection('users').doc(uid).get()).data();
-    walletDiv.innerText = `Points: ${data.points || 0}`;
+  // Show or hide elements depending on login status
+  function updateUI() {
+    if(currentUser) {
+      loginBtn.style.display = 'none';
+      spinBtn.style.display = 'inline-block';
+      wheelContainer.style.display = 'block';
+      result.innerText = '';
+    } else {
+      loginBtn.style.display = 'inline-block';
+      spinBtn.style.display = 'none';
+      wheelContainer.style.display = 'none';
+      result.innerText = 'Please sign in to spin and earn points.';
+    }
   }
 
-  // 📺 Ad placeholder
-  function showAd(cb){
-    alert("✅ Ad finished!"); cb();
-  }
+  // Sign in with Google
+  loginBtn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then((result) => {
+      currentUser = result.user;
+      // Save user info in firestore (if not already)
+      if(currentUser) {
+        const userRef = db.collection('users').doc(currentUser.uid);
+        userRef.set({
+          name: currentUser.displayName,
+          email: currentUser.email,
+          points: 0
+        }, { merge: true });
+      }
+      updateUI();
+    }).catch((error) => {
+      alert('Login Failed: ' + error.message);
+    });
+  });
 
-  // 🎡 Spin logic
-  spinBtn.onclick = async () => {
-    if(spinning) return;
-    spinning=true; resultDiv.innerText="Spinning...";
-    const today = new Date().toISOString().slice(0,10);
-    const doc = await db.collection('users').doc(uid).get();
-    const data = doc.data();
-    const used = data.spins?.[today] || 0;
-    if(used >= maxSpins){ resultDiv.innerText="Today's limit reached!"; spinning=false; return; }
+  // Spin button click
+  spinBtn.addEventListener('click', () => {
+    if(isSpinning) return;
 
-    showAd(async ()=>{
-      const ri = Math.floor(Math.random()*segments.length);
-      const stop=(360*5)+(360-(ri*angle+angle/2));
-      rotation = (rotation + stop) % 3600;
-      document.getElementById('wheel').style.transform=`rotate(${rotation}deg)`;
+    isSpinning = true;
+    result.innerText = "Spinning...";
 
-      setTimeout(async ()=>{
-        const val = segments[ri];
-        const pts = val==="Miss"?0:parseInt(val);
-        resultDiv.innerText = val==="Miss"?"😢 Try again!":`🎉 Won ${val} pts!`;
-        const ref = db.collection('users').doc(uid);
-        await ref.update({
-          points: firebase.firestore.FieldValue.increment(pts),
-          [`spins.${today}`]: firebase.firestore.FieldValue.increment(1)
+    // Calculate random index and stop angle
+    const randomIndex = Math.floor(Math.random() * segments.length);
+    const stopAngle = (360 * 5) + (anglePerSegment * randomIndex) + (anglePerSegment / 2);
+    wheel.style.transition = 'transform 4s ease-out';
+    wheel.style.transform = `rotate(${stopAngle}deg)`;
+
+    setTimeout(async () => {
+      const value = segments[randomIndex];
+      if(value !== 'Miss') {
+        // Update points in Firestore
+        const userRef = db.collection('users').doc(currentUser.uid);
+        await db.runTransaction(async (transaction) => {
+          const doc = await transaction.get(userRef);
+          if(!doc.exists) {
+            transaction.set(userRef, { points: parseInt(value) });
+          } else {
+            let newPoints = (doc.data().points || 0) + parseInt(value);
+            transaction.update(userRef, { points: newPoints });
+          }
         });
-        updateWallet();
-        spinning=false;
-      },4000);
-    });
-  };
+        result.innerText = `🎉 You won ${value} Points!`;
+      } else {
+        result.innerText = '🙁 You missed! Try again.';
+      }
+      isSpinning = false;
+    }, 4000);
+  });
 
-  // 💳 Redeem logic
-  redeemBtn.onclick = async ()=>{
-    const amt = parseInt(document.getElementById('redeemAmt').value);
-    if(!amt) return alert("Enter amount!");
-    const ref=db.collection('users').doc(uid);
-    const pts=(await ref.get()).data().points;
-    if(amt>pts){ alert("Not enough points!"); return; }
-    await ref.update({
-      points: firebase.firestore.FieldValue.increment(-amt),
-      redeems: firebase.firestore.FieldValue.arrayUnion({amount:amt,date:new Date()})
-    });
-    alert(`Redeem request: ${amt} pts`);
-    updateWallet();
-  };
+  // Monitor auth state
+  auth.onAuthStateChanged(user => {
+    currentUser = user;
+    updateUI();
+  });
+
 </script>
 </body>
 </html>
