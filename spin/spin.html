@@ -1,157 +1,133 @@
 <!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8">
-  <title>Spin & Win</title>
-  <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px 0;
-    }
-    .wheel-container {
-      position: relative;
-      margin: 0 auto;
-      width: 320px;
-      height: 320px;
-    }
-    #wheel {
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      border: 8px solid #fff;
-      box-sizing: border-box;
-      overflow: hidden;
-      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
-      background: conic-gradient(
-        #FF6F61 0deg 45deg,
-        #6B5B95 45deg 90deg,
-        #88B04B 90deg 135deg,
-        #F7CAC9 135deg 180deg,
-        #92A8D1 180deg 225deg,
-        #955251 225deg 270deg,
-        #B565A7 270deg 315deg,
-        #009B77 315deg 360deg
-      );
-    }
-    .label {
-      position: absolute;
-      width: 80px;
-      height: 30px;
-      top: 50%;
-      left: 50%;
-      margin-left: -40px;
-      margin-top: -15px;
-      text-align: center;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 1px 1px 2px #000;
-      pointer-events: none;
-    }
-    .label1 { transform: rotate(22.5deg) translate(140px) rotate(-22.5deg); }
-    .label2 { transform: rotate(67.5deg) translate(140px) rotate(-67.5deg); }
-    .label3 { transform: rotate(112.5deg) translate(140px) rotate(-112.5deg); }
-    .label4 { transform: rotate(157.5deg) translate(140px) rotate(-157.5deg); }
-    .label5 { transform: rotate(202.5deg) translate(140px) rotate(-202.5deg); }
-    .label6 { transform: rotate(247.5deg) translate(140px) rotate(-247.5deg); }
-    .label7 { transform: rotate(292.5deg) translate(140px) rotate(-292.5deg); }
-    .label8 { transform: rotate(337.5deg) translate(140px) rotate(-337.5deg); }
-    .pointer {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      width: 0; 
-      height: 0;
-      border-left: 25px solid transparent;
-      border-right: 25px solid transparent;
-      border-top: 35px solid #00e0ff;
-      transform: translateX(-50%);
-      filter: drop-shadow(0 0 5px #00e0ff);
-    }
-    #spinBtn {
-      margin-top: 30px;
-      padding: 14px 40px;
-      font-size: 20px;
-      background: #00e0ff;
-      border: none;
-      border-radius: 8px;
-      color: #000;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 224, 255, 0.6);
-      transition: background 0.3s;
-    }
-    #spinBtn:hover {
-      background: #00b8cc;
-    }
-    #result {
-      margin-top: 30px;
-      font-size: 24px;
-      font-weight: bold;
-      color: #0f0;
-      min-height: 40px;
-      text-shadow: 1px 1px 5px #000;
-    }
-  </style>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spin & Earn</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<style>
+  body{margin:0;padding:0;background:#0f172a;color:#fff;font-family:Arial,sans-serif;text-align:center;}
+  h1{padding:20px;color:#22d3ee;}
+  .wheel-container{position:relative;margin:auto;width:250px;height:250px;}
+  #wheel{width:100%;height:100%;border-radius:50%;background:conic-gradient(
+      #10b981 0deg 45deg,#3b82f6 45deg,#f59e0b 90deg,#ef4444 135deg,
+      #6366f1 180deg,#14b8a6 225deg,#e11d48 270deg,#84cc16 315deg
+    );border:5px solid #fff;transition:transform 4s ease-out;}
+  .pointer{position:absolute;top:-20px;left:50%;transform:translateX(-50%) rotate(180deg);
+    width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;
+    border-top:30px solid #22d3ee;}
+  button,input{margin:10px;padding:10px 20px;font-size:16px;background:#22d3ee;color:#000;border:none;border-radius:6px;cursor:pointer;}
+  #wallet,#result{margin:10px;font-size:18px;}
+</style>
 </head>
 <body>
 
-<h1>Spin & Win</h1>
-<div class="wheel-container">
-  <div class="pointer"></div>
-  <div id="wheel">
-    <div class="label label1">5</div>
-    <div class="label label2">10</div>
-    <div class="label label3">15</div>
-    <div class="label label4">20</div>
-    <div class="label label5">50</div>
-    <div class="label label6">100</div>
-    <div class="label label7">Miss</div>
-    <div class="label label8">25</div>
+<h1>Spin & Earn</h1>
+<button id="googleBtn">Sign in with Google</button>
+<div id="app" style="display:none;">
+  <div id="wallet">Points: 0</div>
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <div id="wheel"></div>
   </div>
+  <button id="spinBtn">SPIN (Watch Ad)</button>
+  <div id="result"></div>
+  <input type="number" id="redeemAmt" placeholder="Redeem points">
+  <button id="redeemBtn">Redeem</button>
 </div>
 
-<button id="spinBtn">SPIN</button>
-<div id="result"></div>
-
 <script>
-  const wheel = document.getElementById('wheel');
-  const spinBtn = document.getElementById('spinBtn');
-  const result = document.getElementById('result');
+  // 🔧 ১. আপনার Firebase প্রোজেক্টের মান বসান এখানে:
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MSG_ID",
+    appId: "YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth(), db = firebase.firestore();
 
-  const segments = ['5', '10', '15', '20', '50', '100', 'Miss', '25'];
-  const segmentAngle = 360 / segments.length;
-  let spinning = false;
-  let currentRotation = 0;
+  const googleBtn=document.getElementById('googleBtn'),
+        appDiv=document.getElementById('app'),
+        walletDiv=document.getElementById('wallet'),
+        spinBtn=document.getElementById('spinBtn'),
+        resultDiv=document.getElementById('result'),
+        redeemBtn=document.getElementById('redeemBtn');
 
-  spinBtn.addEventListener('click', () => {
+  const segments=["5","10","15","20","Miss","50","100","25"],
+        angle=360/segments.length, maxSpins=5;
+  let uid="", rotation=0, spinning=false;
+
+  // 🔐 Google Login
+  googleBtn.onclick = async () => {
+    const provider=new firebase.auth.GoogleAuthProvider();
+    const cred=await auth.signInWithPopup(provider);
+    uid = cred.user.uid;
+    googleBtn.style.display='none';
+    appDiv.style.display='block';
+    updateWallet();
+  };
+
+  // 🧾 Wallet Update
+  async function updateWallet(){
+    const doc = await db.collection('users').doc(uid).get();
+    if(!doc.exists) await db.collection('users').doc(uid).set({points:0,spins:{},redeems:[]});
+    const data = (await db.collection('users').doc(uid).get()).data();
+    walletDiv.innerText = `Points: ${data.points || 0}`;
+  }
+
+  // 📺 Ad placeholder
+  function showAd(cb){
+    alert("✅ Ad finished!"); cb();
+  }
+
+  // 🎡 Spin logic
+  spinBtn.onclick = async () => {
     if(spinning) return;
-    spinning = true;
-    result.textContent = "Spinning...";
+    spinning=true; resultDiv.innerText="Spinning...";
+    const today = new Date().toISOString().slice(0,10);
+    const doc = await db.collection('users').doc(uid).get();
+    const data = doc.data();
+    const used = data.spins?.[today] || 0;
+    if(used >= maxSpins){ resultDiv.innerText="Today's limit reached!"; spinning=false; return; }
 
-    const randomIndex = Math.floor(Math.random() * segments.length);
-    const spins = 5;
-    const stopAt = (spins * 360) + (360 - (randomIndex * segmentAngle + segmentAngle/2));
+    showAd(async ()=>{
+      const ri = Math.floor(Math.random()*segments.length);
+      const stop=(360*5)+(360-(ri*angle+angle/2));
+      rotation = (rotation + stop) % 3600;
+      document.getElementById('wheel').style.transform=`rotate(${rotation}deg)`;
 
-    currentRotation = (currentRotation + stopAt) % 3600;
+      setTimeout(async ()=>{
+        const val = segments[ri];
+        const pts = val==="Miss"?0:parseInt(val);
+        resultDiv.innerText = val==="Miss"?"😢 Try again!":`🎉 Won ${val} pts!`;
+        const ref = db.collection('users').doc(uid);
+        await ref.update({
+          points: firebase.firestore.FieldValue.increment(pts),
+          [`spins.${today}`]: firebase.firestore.FieldValue.increment(1)
+        });
+        updateWallet();
+        spinning=false;
+      },4000);
+    });
+  };
 
-    wheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
-    wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-    setTimeout(() => {
-      const value = segments[randomIndex];
-      if(value === "Miss") {
-        result.textContent = "🙁 আপনি মিস করেছেন! আবার চেষ্টা করুন।";
-        result.style.color = "#ff4444";
-      } else {
-        result.textContent = `🎉 আপনি ${value} পয়েন্ট জিতেছেন!`;
-        result.style.color = "#0f0";
-      }
-      spinning = false;
-    }, 5000);
-  });
+  // 💳 Redeem logic
+  redeemBtn.onclick = async ()=>{
+    const amt = parseInt(document.getElementById('redeemAmt').value);
+    if(!amt) return alert("Enter amount!");
+    const ref=db.collection('users').doc(uid);
+    const pts=(await ref.get()).data().points;
+    if(amt>pts){ alert("Not enough points!"); return; }
+    await ref.update({
+      points: firebase.firestore.FieldValue.increment(-amt),
+      redeems: firebase.firestore.FieldValue.arrayUnion({amount:amt,date:new Date()})
+    });
+    alert(`Redeem request: ${amt} pts`);
+    updateWallet();
+  };
 </script>
-
 </body>
 </html>
